@@ -1,0 +1,179 @@
+*, *::after, *::before {
+    box-sizing: border-box;
+    border: none;
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+}
+
+#nav_bar{
+    
+    z-index: 99999;
+    border-radius: 0px 20px 20px 0px;
+    padding: .5rem;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #3e3e3ec0;
+    width: 1.8rem;
+    height: 100%;
+    overflow: hidden;
+    transition: all ease .3s;
+    box-shadow: -1px 14px 10px -8px rgba(0,0,0,0.46);
+    backdrop-filter: blur(10px);
+}
+
+#nav_bar:hover {
+    border-radius: 0px 5px 5px 0px;
+    box-shadow: -1px 14px 52px -8px rgba(0,0,0,0.46);
+    width: 10rem;
+}
+
+
+#nav_bar > input{
+    transition: all ease-out .2s;
+    width: 0rem;
+}
+
+#nav_bar:hover > input{
+    width: 1rem;
+    display: flex;
+}
+
+#nav_bar> input:hover {
+    width: 8rem;
+}
+
+
+
+.canvaDragger {
+    border-radius: 10px 10px 0px 0px;
+    user-select: none;
+    width: 100%;
+    height: 25px;
+    color: #ddd;
+    text-align: start;
+    padding: 5px;
+    background-color: #555;
+    font-family: monospace;
+    font-weight: 900;
+    font-size: small;
+    letter-spacing: 2px;
+    cursor: grab;
+
+}
+
+.canvaContainer{
+
+    -webkit-box-shadow: -1px 9px 25px -8px rgba(0,0,0,0.46);
+    -moz-box-shadow: -1px 9px 25px -8px rgba(0,0,0,0.46);
+    box-shadow: -1px 9px 25px -8px rgba(0,0,0,0.46);
+    backdrop-filter: blur(10px);
+    transition: box-shadow ease .3s, transform 0.2s, background-color .3s;
+    background-color: #eeeeee;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    border-radius: 25px;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.canvaContainer[data-dragger-off-limit="false"]{
+    flex-direction: column;
+}
+.canvaContainer[data-dragger-off-limit="true"]{
+    flex-direction: column-reverse;
+}
+
+.canvaContainer[data-is-clicked="true"]{
+    
+    background-color: #eeeeee69;
+    transition: box-shadow ease .3s, transform 0.2s, background-color .3s;
+    -webkit-box-shadow: -1px 14px 52px -8px rgba(0,0,0,0.46);
+    -moz-box-shadow: -1px 14px 52px -8px rgba(0,0,0,0.46);
+    box-shadow: -1px 14px 52px -8px rgba(0,0,0,0.46);
+    transform: scale(1.02);
+
+}
+
+.CanvasToolBar{
+
+    border-radius: 0px 0px 10px 10px;
+
+    width: 100%;
+    height: fit-content;
+    background-color: #333;
+    backdrop-filter: blur(40px);
+    display: flex;
+    flex-direction: column;
+    padding: 2px;
+    gap: 5px;
+
+}
+
+.CanvasToolBar > section > input[type="color"]{
+    border-radius: 20%;
+    padding: 0;
+    background: transparent;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: none;
+    outline: none;
+    transition: all ease .2s;
+}
+
+.CanvasToolBar > section > input[type="color"]:hover{
+    transform: scale(1.15) rotate(360deg);
+}
+
+.CanvasToolBar > section > input[type="range"]{
+    border-radius: 25%;
+    padding: 0;
+    border: none;
+    outline: none;
+    width: 1rem;
+    transition: all ease .3s;
+}
+
+.CanvasToolBar > section > input[type="range"]:hover{
+    width: 8rem;
+    transition: all ease .3s;
+    
+}
+
+.CanvasToolBar > section{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: .5rem;
+    padding: 1px;
+    padding-inline: 4px;
+}
+
+.toolBarTrash{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("./assets/trash.svg");
+    background-size: 15px;
+    padding: .8rem;
+    border-radius: 100%;
+    transition: all ease .2s;
+}
+
+.toolBarTrash:hover{
+    background-color: rgb(248, 156, 156);
+    transform: rotate(360deg) scale(1.1);
+}
+
+canvas{
+    border: 2px solid black;
+    margin: 0;
+    cursor: crosshair;
+}
+
+
+
