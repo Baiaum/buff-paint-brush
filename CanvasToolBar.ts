@@ -46,6 +46,7 @@ export class CanvasToolBar {
 
         let clearBTN = document.createElement("button");
         clearBTN.classList.add("toolBarTrash");
+
         clearBTN.addEventListener("click", () => {
             this.#ParentCanvas.clearAll();
         })
@@ -72,7 +73,7 @@ export class CanvasToolBar {
         toolBarDiv.appendChild(stylingSec)
         toolBarDiv.appendChild(utilsSec)
 
-
+        
         this.#ParentCanvas.getContainer().appendChild(toolBarDiv);
         
     }

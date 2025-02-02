@@ -19,7 +19,7 @@ export class DrawingCanvas {
         _DrawingCanvas_canvas.set(this, void 0);
         _DrawingCanvas_rootCanvasId.set(this, void 0);
         DrawingCanvas.instances.push(canvasName);
-        DrawingCanvas.highest_zindex + 1;
+        DrawingCanvas.highest_zindex++;
         // If only width is set, the height is set to the same as the width
         if (w == 200 && h == 100) {
             h = w;
@@ -35,13 +35,36 @@ export class DrawingCanvas {
         let canvaContainer = document.createElement("div");
         canvaContainer.id = `container-${canva.id}`;
         canvaContainer.dataset.draggerOffLimit = "false";
+        canvaContainer.dataset.minimized = "false";
         canvaContainer.classList.add("canvaContainer");
         canvaContainer.style.zIndex = DrawingCanvas.highest_zindex.toString();
         canvaContainer.style.left = `${window.innerWidth / 3.5}px`;
         canvaContainer.style.top = `${window.innerHeight / 3.5}px`;
+        // DRAGGER
         let canvaDragger = document.createElement("div");
         canvaDragger.id = `dragger-${canva.id}`;
-        canvaDragger.innerText = canvasName;
+        let draggerBTNcontainer = document.createElement("section");
+        //Defining Minimizing button
+        let minimizeBTN = document.createElement("button");
+        minimizeBTN.classList.add("canvaDraggerSecBTNS");
+        minimizeBTN.id = "minimizeBTN";
+        this.HandleMinimize(minimizeBTN, this);
+        //Defining closeBTN
+        let closeBTN = document.createElement("button");
+        closeBTN.classList.add("canvaDraggerSecBTNS");
+        closeBTN.id = "closeBTN";
+        closeBTN.addEventListener("click", () => {
+            this.getContainer().dataset.minimized = "true";
+        });
+        draggerBTNcontainer.appendChild(minimizeBTN);
+        draggerBTNcontainer.appendChild(closeBTN);
+        //Defining nameElement
+        let nameDisplay = document.createElement("span");
+        nameDisplay.innerHTML = canvasName;
+        canvaDragger.appendChild(nameDisplay);
+        canvaDragger.appendChild(draggerBTNcontainer);
+        //@ts-ignore
+        // this.#ParentCanvas.getContainer().dataset.minimized = "true";
         canvaDragger.classList.add("canvaDragger");
         this.handleContainerDrag(canvaDragger, this);
         __classPrivateFieldSet(this, _DrawingCanvas_canvaContainer, canvaContainer, "f");
@@ -52,6 +75,26 @@ export class DrawingCanvas {
         html.appendChild(canvaContainer);
         // Instanciating a new ToolBar
         this.toolBar = new CanvasToolBar(this);
+    }
+    HandleMinimize(btn, drawingCanvas) {
+        function minimize() {
+            drawingCanvas.getContainer().dataset.minimized = "true";
+            let minimized_canvas = document.getElementById("minimized_canvas");
+            if (minimized_canvas) {
+                let mininimized_canva_icon = document.createElement("div");
+                mininimized_canva_icon.classList.add("mininimized_canva_icon");
+                mininimized_canva_icon.title = __classPrivateFieldGet(drawingCanvas, _DrawingCanvas_canvasName, "f");
+                mininimized_canva_icon.innerText = `${__classPrivateFieldGet(drawingCanvas, _DrawingCanvas_canvasName, "f")[0].toLocaleUpperCase()}${__classPrivateFieldGet(drawingCanvas, _DrawingCanvas_canvasName, "f")[__classPrivateFieldGet(drawingCanvas, _DrawingCanvas_canvasName, "f").length - 1].toLocaleUpperCase()}`;
+                function maximize() {
+                    drawingCanvas.getContainer().dataset.minimized = "false";
+                    mininimized_canva_icon.removeEventListener("click", maximize);
+                    mininimized_canva_icon.remove();
+                }
+                mininimized_canva_icon.addEventListener("click", maximize);
+                minimized_canvas.appendChild(mininimized_canva_icon);
+            }
+        }
+        btn.addEventListener("click", minimize);
     }
     handleContainerDrag(div, drawingCanvas) {
         function mouseUp() {

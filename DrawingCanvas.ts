@@ -9,9 +9,9 @@ export class DrawingCanvas  {
     static lastSelectedContainer: HTMLDivElement | null;
     static instances: Array<string> = [];
     
-    #canvasName: string;
-    ctx2d: CanvasRenderingContext2D | null;
-    toolBar: CanvasToolBar;
+    readonly #canvasName: string;
+    readonly ctx2d: CanvasRenderingContext2D | null;
+    readonly toolBar: CanvasToolBar;
     #isClicked: boolean = false;
     #canvaContainer: HTMLDivElement;
     #canvas: HTMLCanvasElement;
@@ -23,7 +23,7 @@ export class DrawingCanvas  {
 
         DrawingCanvas.instances.push(canvasName);
 
-        DrawingCanvas.highest_zindex + 1;
+        DrawingCanvas.highest_zindex++;
 
         // If only width is set, the height is set to the same as the width
         if(w == 200 && h == 100){
@@ -48,6 +48,7 @@ export class DrawingCanvas  {
         canvaContainer.id = `container-${canva.id}`;
 
         canvaContainer.dataset.draggerOffLimit = "false";
+        canvaContainer.dataset.minimized = "false";
 
         canvaContainer.classList.add("canvaContainer");
         canvaContainer.style.zIndex = DrawingCanvas.highest_zindex.toString();
@@ -55,14 +56,47 @@ export class DrawingCanvas  {
         canvaContainer.style.left = `${window.innerWidth / 3.5}px`;
         canvaContainer.style.top = `${window.innerHeight / 3.5}px`;
 
+        // DRAGGER
+
         let canvaDragger = document.createElement("div");
         canvaDragger.id = `dragger-${canva.id}`;
 
-        canvaDragger.innerText = canvasName;
+        let draggerBTNcontainer = document.createElement("section");
+
+
+        //Defining Minimizing button
+
+        let minimizeBTN = document.createElement("button");
+        minimizeBTN.classList.add("canvaDraggerSecBTNS");
+        minimizeBTN.id = "minimizeBTN";
+
+        this.HandleMinimize(minimizeBTN, this);
+
+        //Defining closeBTN
+
+        let closeBTN = document.createElement("button");
+        closeBTN.classList.add("canvaDraggerSecBTNS");
+        closeBTN.id = "closeBTN";
+
+        closeBTN.addEventListener("click", () => {
+            this.getContainer().dataset.minimized = "true";
+        })
+        
+        draggerBTNcontainer.appendChild(minimizeBTN)
+        draggerBTNcontainer.appendChild(closeBTN)
+
+        //Defining nameElement
+
+        let nameDisplay = document.createElement("span");
+        nameDisplay.innerHTML = canvasName;
+
+        canvaDragger.appendChild(nameDisplay)
+        canvaDragger.appendChild(draggerBTNcontainer);
+        
 
         canvaDragger.classList.add("canvaDragger");
 
-        this.handleContainerDrag(canvaDragger, this);
+        this.handleContainerDrag(canvaDragger, this, this.containerDrag_MouseDown);
 
         this.#canvaContainer = canvaContainer;
 
@@ -78,29 +112,63 @@ export class DrawingCanvas  {
         this.toolBar = new CanvasToolBar(this);
 
     }
-    
-    handleContainerDrag(div: HTMLDivElement, drawingCanvas: DrawingCanvas){
-    
+
+    HandleMinimize(btn: HTMLButtonElement, drawingCanvas: DrawingCanvas){
+        
+        function minimize(){
+            
+            drawingCanvas.getContainer().dataset.minimized = "true";
+
+            let minimized_canvas = document.getElementById("minimized_canvas");
+
+            if(minimized_canvas){
+
+                let mininimized_canva_icon = document.createElement("div");
+                mininimized_canva_icon.classList.add("mininimized_canva_icon");
+                mininimized_canva_icon.title = drawingCanvas.#canvasName;
+                mininimized_canva_icon.innerText = `${drawingCanvas.#canvasName[0].toLocaleUpperCase()}${drawingCanvas.#canvasName[drawingCanvas.#canvasName.length - 1].toLocaleUpperCase()}`
+
+                function maximize(){
+
+                    drawingCanvas.getContainer().dataset.minimized = "false";
+                    mininimized_canva_icon.removeEventListener("click", maximize)
+                    mininimized_canva_icon.remove();
+
+                }
+
+                mininimized_canva_icon.addEventListener("click", maximize)
+
+                minimized_canvas.appendChild(mininimized_canva_icon);
+            }
+
+        }
+
+
+        btn.addEventListener("click", minimize);
+    }
+
+    containerDrag_MouseDown(e: MouseEvent, drawingCanvas: DrawingCanvas){
+
         function mouseUp(){
                 
             drawingCanvas.setIsClicked(false);
             
             DrawingCanvas.currentSelectedContainer?.removeEventListener("mouseup", mouseUp)
         }
-    
-        function mouseDown(e: MouseEvent){
             
-            DrawingCanvas.lastMouseDownEventXY = {"offsetX": e.offsetX, "offsetY": e.offsetY};
+        DrawingCanvas.lastMouseDownEventXY = {"offsetX": e.offsetX, "offsetY": e.offsetY};
 
-            DrawingCanvas.highest_zindex++;
+        DrawingCanvas.highest_zindex++;
 
-            drawingCanvas.setIsClicked(true);
+        drawingCanvas.setIsClicked(true);
 
-            DrawingCanvas.currentSelectedContainer?.addEventListener("mouseup", mouseUp)
+        DrawingCanvas.currentSelectedContainer?.addEventListener("mouseup", mouseUp)
 
-        }
-        
-        div.addEventListener("mousedown", mouseDown)
+    }
+    
+    handleContainerDrag(div: HTMLDivElement, drawingCanvas: DrawingCanvas){
+    
+        div.addEventListener("mousedown", this.containerDrag_MouseDown)
 
     }
     
@@ -139,11 +207,12 @@ export class DrawingCanvas  {
         
         canvas.addEventListener("mousedown", mouseDown)
 
-        function clickDraw(e: MouseEvent){
-            drawingCanvas.draw(e.offsetX, e.offsetY);
-        }
+        canvas.addEventListener("click", this.clickDraw)
 
-        canvas.addEventListener("click", clickDraw)
+    }
+
+    clickDraw(e: MouseEvent){
+        this.draw(e.offsetX, e.offsetY);
     }
 
     getRootCanvasId(): string {
@@ -209,11 +278,23 @@ export class DrawingCanvas  {
     }
 
     clearAll(){
-        if(!this.ctx2d) return 0;
 
-        // this.ctx2d.fillStyle = this.toolBar.getFillStyle();
-        this.ctx2d.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+        this.ctx2d?.clearRect(0, 0, this.#canvas.width, this.#canvas.height);
+
     }
+
+    addSelfDestructingEventListener = (element: HTMLElement, eventType: keyof HTMLElementEventMap, callback: Function) => {
+        
+        let handler = () => {
+
+            callback();
+            element.removeEventListener(eventType, handler);
+            
+        };
+
+        element.addEventListener(eventType, handler);
+
+    };
 
 }
 

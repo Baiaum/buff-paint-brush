@@ -21,6 +21,11 @@
     transition: all ease .3s;
     box-shadow: -1px 14px 10px -8px rgba(0,0,0,0.46);
     backdrop-filter: blur(10px);
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
 }
 
 #nav_bar:hover {
@@ -44,24 +49,89 @@
     width: 8rem;
 }
 
+#minimized_canvas{
+    background-color: #fff;
+    height: 100%;
+    padding: 5px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    justify-content: center;
+    align-items: center;
+}
 
+.mininimized_canva_icon{
+    width: 2rem;
+    height: 2rem;
+    border-radius: 100%;
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ccc;
+}
 
 .canvaDragger {
+
     border-radius: 10px 10px 0px 0px;
     user-select: none;
     width: 100%;
     height: 25px;
     color: #ddd;
     text-align: start;
-    padding: 5px;
+    padding: 18px 5px 18px 5px;
     background-color: #555;
     font-family: monospace;
     font-weight: 900;
     font-size: small;
     letter-spacing: 2px;
     cursor: grab;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
 }
+
+.canvaDragger > section {
+    display: flex;
+    padding: 2px;
+    border-radius: 75px;
+    background-color: #fff;
+    gap: 3px;
+}
+
+#minimizeBTN{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("./assets/minimize_icon.svg");
+    background-size: 15px;
+    padding: .6rem;
+    border-radius: 100%;
+    transition: all ease .2s;
+    
+}
+
+#minimizeBTN:hover{
+    background-color: #eae8b9;
+    transform: rotate(90deg);
+}
+
+#closeBTN{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("./assets/closeBTN.svg");
+    background-size: 12px;
+    padding: .6rem;
+    border-radius: 100%;
+    transition: all ease .2s;
+}
+
+#closeBTN:hover{
+    background-color: #edbebe;
+    transform: rotate(90deg);
+}
+
 
 .canvaContainer{
 
@@ -79,6 +149,11 @@
     align-items: center;
 
 }
+.canvaContainer[data-minimized="true"]{
+    
+    display: none;
+    
+}
 
 .canvaContainer[data-dragger-off-limit="false"]{
     flex-direction: column;
@@ -94,7 +169,7 @@
     -webkit-box-shadow: -1px 14px 52px -8px rgba(0,0,0,0.46);
     -moz-box-shadow: -1px 14px 52px -8px rgba(0,0,0,0.46);
     box-shadow: -1px 14px 52px -8px rgba(0,0,0,0.46);
-    transform: scale(1.02);
+    transform: scale(1.01);
 
 }
 
